@@ -18,14 +18,11 @@ module.exports = function(app,db) {
     } 
   });
 
-  app.get('/:url*', processUrl);
-  
+  app.get('/:url*', processUrl);  
   
   function processUrl(req, res) {
-    var url = process.env.APP_URL + req.params.url;
-    if (url != process.env.APP_URL + 'favicon.ico') {
-      getUrl(url, db, res);
-    }
+    var url = req.params.url;
+    getUrl(url, db, res);
   }
   
   function addNewUrl() {
@@ -34,7 +31,6 @@ module.exports = function(app,db) {
   
   
   function getUrl(link, db, res) {
-
     var sites = db.collection('sites');
     // get the url
     sites.findOne({

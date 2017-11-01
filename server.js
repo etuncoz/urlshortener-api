@@ -8,10 +8,13 @@
 var fs = require('fs');
 var express = require('express');
 var app = express();
+var route = require('./app/route.js');
+var api = require('./app/api.js');
+
 var mongo = require('mongodb');
 
 
-mongo.MongoClient.connect(process.env.MONGODB_URI, function(err, db) {
+mongo.MongoClient.connect(process.env.MONGODB_URI || "test", function(err, db) {
 
   if (err) {
     throw new Error('Database!');
@@ -31,30 +34,11 @@ mongo.MongoClient.connect(process.env.MONGODB_URI, function(err, db) {
       next();
     });
   }
-  var shortUrlNumber = 1000;
-
-  var urls = {1000:'http://www.google.com'};
 
   app.use('/public', express.static(process.cwd() + '/public'));
 
-  app.route('/_api/package.json')
-    .get(function(req, res, next) {
-      console.log('requested');
-      fs.readFile(__dirname + '/package.json', function(err, data) {
-        if(err) return next(err);
-        res.type('txt').send(data.toString());
-      });
-    });
-
-  app.route('/')
-      .get(function(req, res) {
-        res.sendFile(process.cwd() + '/views/index.html');
-      });
-
-
-  
-
-
+  route(app, db);
+  api(app, db)
 
 
 
