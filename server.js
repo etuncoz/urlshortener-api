@@ -8,6 +8,7 @@
 var fs = require('fs');
 var express = require('express');
 var app = express();
+var mongo = require('mongodb');
 
 
 if (!process.env.DISABLE_XORIGIN) {
@@ -56,7 +57,7 @@ app.get('/new/*', function(req,res){
     
     res.send(response);
   }
-  else{
+  else {
     res.send('Please enter a valid url');
   } 
 });
@@ -67,7 +68,7 @@ app.get('/*', function(req,res){
     var redirectUrl = urls[req.params[0]];
     res.redirect(redirectUrl);
   }
-  else{
+  else {
     res.send('No url found for: '+req.params[0]);
   }
 });
