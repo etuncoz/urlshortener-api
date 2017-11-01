@@ -21,6 +21,9 @@ if (!process.env.DISABLE_XORIGIN) {
     next();
   });
 }
+var shortUrlNumber = 1000;
+
+var urls = {'test':'www.google.com'};
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
@@ -38,10 +41,20 @@ app.route('/')
 		  res.sendFile(process.cwd() + '/views/index.html');
     })
 
-app.get('/new*', function(req,res){
+app.get('/new/*', function(req,res){
   
-  
+  if(req.params[0]) {
+    urls[shortUrlNumber] = req.params[0];
+    shortUrlNumber++;
+    
+    var response = {};
+    response['shortUrl'] = 'https://brick-board.glitch.me/' + short;
+    response['originalUrl'] = 
+    
     res.send(req.params[0]);
+  }
+  
+  
 });
 
 // Respond not found to all the wrong routes
