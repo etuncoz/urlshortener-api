@@ -9,6 +9,7 @@ var fs = require('fs');
 var express = require('express');
 var app = express();
 
+
 if (!process.env.DISABLE_XORIGIN) {
   app.use(function(req, res, next) {
     var allowedOrigins = ['https://narrow-plane.gomix.me', 'https://www.freecodecamp.com'];
@@ -23,7 +24,7 @@ if (!process.env.DISABLE_XORIGIN) {
 }
 var shortUrlNumber = 1000;
 
-var urls = {1000:'www.google.com'};
+var urls = {1000:'http://www.google.com'};
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
@@ -41,22 +42,11 @@ app.route('/')
 		  res.sendFile(process.cwd() + '/views/index.html');
     })
 
-app.get('/*', function(req,res){
-  if(req.params[0] && urls.hasOwnProperty(req.params[0])) {
-    
-    var redirectUrl = urls[req.params[0]];
-    res.redirect(redirectUrl);
-    res.redirect('www.google.com');
-  }
-  else{
-    res.send('No url found for: '+req.params[0]);
-  }
-});
-  
+
 app.get('/new/*', function(req,res){
-  
+
   if(req.params[0]) {
-    urls[shortUrlNumber] = req.params[0];
+    urls[shortUrlNumber++] = req.params[0];
     
     var response = {};
     response['shortUrl'] = 'https://brick-board.glitch.me/' + shortUrlNumber;
@@ -70,6 +60,19 @@ app.get('/new/*', function(req,res){
     res.send('Please enter a valid url');
   } 
 });
+
+app.get('/*', function(req,res){
+  if(req.params[0] && urls.hasOwnProperty(req.params[0])) {
+
+    var redirectUrl = urls[req.params[0]];
+    res.redirect(redirectUrl);
+  }
+  else{
+    res.send('No url found for: '+req.params[0]);
+  }
+});
+  
+
 
 
 
