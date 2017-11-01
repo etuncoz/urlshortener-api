@@ -49,37 +49,10 @@ mongo.MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/
   app.route('/')
       .get(function(req, res) {
         res.sendFile(process.cwd() + '/views/index.html');
-      })
+      });
 
 
-  app.get('/new/*', function(req,res){
-
-    if(req.params[0]) {
-      urls[shortUrlNumber++] = req.params[0];
-
-      var response = {};
-      response['shortUrl'] = 'https://brick-board.glitch.me/' + shortUrlNumber;
-      response['originalUrl'] = urls[shortUrlNumber];
-
-      shortUrlNumber++;
-
-      res.send(response);
-    }
-    else {
-      res.send('Please enter a valid url');
-    } 
-  });
-
-  app.get('/*', function(req,res){
-    if(req.params[0] && urls.hasOwnProperty(req.params[0])) {
-
-      var redirectUrl = urls[req.params[0]];
-      res.redirect(redirectUrl);
-    }
-    else {
-      res.send('No url found for: '+req.params[0]);
-    }
-  });
+  
 
 
 
