@@ -11,7 +11,7 @@ var app = express();
 var mongo = require('mongodb');
 
 
-mongo.MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/url-shortener', function(err, db) {
+mongo.MongoClient.connect(process.env.MONGODB_URI, function(err, db) {
 
   if (err) {
     throw new Error('Database!');
