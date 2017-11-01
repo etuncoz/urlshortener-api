@@ -38,6 +38,12 @@ app.route('/')
 		  res.sendFile(process.cwd() + '/views/index.html');
     })
 
+app.get('/new*', function(req,res){
+  
+  
+    res.send(req.params[0]);
+});
+
 // Respond not found to all the wrong routes
 app.use(function(req, res, next){
   res.status(404);
