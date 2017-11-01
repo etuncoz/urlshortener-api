@@ -1,6 +1,6 @@
 module.exports = function(app,db) {
   
-  app.get('/new/:url', function(req,res){
+  app.get('/new/:url*', function(req,res){
 
     if(req.params.url) {
       urls[shortUrlNumber++] = req.params.url;
@@ -18,10 +18,14 @@ module.exports = function(app,db) {
     } 
   });
 
-  app.get('/:url', function(req,res){
-    
-    
-    
-  });
+  app.get('/:url*', processUrl);
   
+  
+  var processUrl = function (request, response) {
+    
+  }
+  
+  var addNewUrl = function () {
+    
+  }
 }
