@@ -1,28 +1,15 @@
 module.exports = function(app,db) {
   
   app.get('/new/:url*', function(req,res){
-
-
-    
+   
     var url = req.url.slice(5);
     
     console.log("Url: " + url);
     
     if(validateUrl(url)) {
       
-      var addedRecord = addNewUrl();
-      
-      console.log("addedRecord:" + addedRecord);
-      
-      if(addedRecord)
-        res.send({
-          "short_url" : process.env.APP_URL + addedRecord._id,
-          "original_url" : addedRecord.original_url
-        });
-      else 
-        res.send("Unexpected error");
-    }
-    else{
+      addNewUrl(url, res);
+    } else {
       res.send("Url not valid");
     }
   });
@@ -34,43 +21,44 @@ module.exports = function(app,db) {
     getUrl(id, db, res);
   }
   
-  function addNewUrl(originalUrl) {
+  function addNewUrl(originalUrl, response) {
     
     var sites = db.collection('sites');
     
     sites.find().sort({ _id : -1}).limit(1).toArray(function(err, records){
       
-      console.log(err);
-      console.log(record);
-      
       if(err){
-        console.log("Error: " +err);
-        return null;
+        response.send("Unexpected error");
       }
       
-      if(records) {
-        console.log("newRecord");
-        record._id = record._id + 1;
-        record.original_url = originalUrl;
-      }
-
-      else {    
-        console.log("firstRecord");
-        record._id = 1000;
-        record.original_url = originalUrl;
+      var record = records[0];
+      
+      var newRecord = {};
+      
+      if(record) {       
+        newRecord._id = record._id + 1;
+        newRecord.original_url = originalUrl;
+      } else {    
+        newRecord._id = 1000;
+        newRecord.original_url = originalUrl;
       }
     
-      sites.insertOne(record);  
+      sites.insertOne(newRecord);  
 
-      return record;                 
+      response.send({
+          "short_url" : process.env.APP_URL + newRecord._id,
+          "original_url" : newRecord.original_url
+        });                
     });                                     
   }
   
   function getUrl(id, db, res) {
     var sites = db.collection('sites');
-    // get the url
+  
+    //may need to control parseInt
+    
     sites.findOne({
-      _id: id
+      _id: parseInt(id, 10)
     }, function(err, result) {
       if (err) res.send("Something went wrong");
 

@@ -9,6 +9,6 @@ module.exports = function(app, db) {
 
   app.route('/new')
     .get(function(req, res) {
-      res.send("Error: You need to add a proper url");
+      res.send("You need to add a proper url, i.e. http://www.google.com");
     });
 };
