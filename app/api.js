@@ -38,7 +38,7 @@ module.exports = function(app,db) {
     
     var sites = db.collection('sites');
     
-    sites.find().sort({ _id : -1}).limit(1, function(err, record){
+    sites.find().sort({ _id : -1}).limit(1).toArray(function(err, records){
       
       console.log(err);
       console.log(record);
@@ -48,7 +48,7 @@ module.exports = function(app,db) {
         return null;
       }
       
-      if(record) {
+      if(records) {
         console.log("newRecord");
         record._id = record._id + 1;
         record.original_url = originalUrl;
@@ -62,8 +62,8 @@ module.exports = function(app,db) {
     
       sites.insertOne(record);  
 
-      return record;      
-    });      
+      return record;                 
+    });                                     
   }
   
   function getUrl(id, db, res) {
