@@ -2,33 +2,79 @@ module.exports = function(app,db) {
   
   app.get('/new/:url*', function(req,res){
 
-    if(validateUrl(req.params.url)) {
+
+    
+    var url = req.url.slice(5);
+    
+    console.log("Url: " + url);
+    
+    if(validateUrl(url)) {
       
+      var addedRecord = addNewUrl();
+      
+      console.log("addedRecord:" + addedRecord);
+      
+      if(addedRecord)
+        res.send({
+          "short_url" : process.env.APP_URL + addedRecord._id,
+          "original_url" : addedRecord.original_url
+        });
+      else 
+        res.send("Unexpected error");
+    }
+    else{
+      res.send("Url not valid");
     }
   });
 
-  app.get('/:url*', processUrl);  
+  app.get('/:id*', processUrl);  
   
   function processUrl(req, res) {
-    var url = req.params.url;
-    getUrl(url, db, res);
+    var id = req.params.id;
+    getUrl(id, db, res);
   }
   
-  function addNewUrl() {
+  function addNewUrl(originalUrl) {
     
+    var sites = db.collection('sites');
+    
+    sites.find().sort({ _id : -1}).limit(1, function(err, record){
+      
+      console.log(err);
+      console.log(record);
+      
+      if(err){
+        console.log("Error: " +err);
+        return null;
+      }
+      
+      if(record) {
+        console.log("newRecord");
+        record._id = record._id + 1;
+        record.original_url = originalUrl;
+      }
+
+      else {    
+        console.log("firstRecord");
+        record._id = 1000;
+        record.original_url = originalUrl;
+      }
+    
+      sites.insertOne(record);  
+
+      return record;      
+    });      
   }
   
-  function getUrl(link, db, res) {
+  function getUrl(id, db, res) {
     var sites = db.collection('sites');
     // get the url
     sites.findOne({
-      "short_url": link
+      _id: id
     }, function(err, result) {
       if (err) res.send("Something went wrong");
 
       if (result) {
-        console.log('Result ' + result);
-        console.log('Redirecting to: ' + result.original_url);
         res.redirect(result.original_url);
       } else {
         res.send("Url not found");
